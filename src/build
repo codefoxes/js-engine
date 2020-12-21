@@ -1,0 +1,22 @@
+#!/bin/bash
+
+buildbackend() {
+	if [ "$1" == "--watch" ] || [ "$1" == "-w" ]; then
+		rollup -c -w
+	else
+		rollup -c
+	fi
+}
+
+bundle() {
+	rsync -avP --exclude={'.*','*node_modules*','*package*','*src*','*.map','rollup.config.js','README.md','assets-svn*'} ./* ~/projects/js-engine/trunk/
+	rsync -avP ./assets-svn/* ~/projects/js-engine/assets/
+}
+
+if [ -z "$1" ]; then
+	buildbackend
+elif [ "$1" == "-w" ]; then
+	buildbackend -w
+elif [ "$1" == "-b" ]; then
+	bundle
+fi

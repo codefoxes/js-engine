@@ -1,0 +1,13 @@
+{
+  "name": "js-engine",
+  "version": "1.0.0",
+  "description": "Build and SSR for Javascript frameworks",
+  "main": "entry.js",
+  "scripts": {
+    "build": "./src/build",
+    "build:watch": "./src/build -w",
+    "bundle": "./src/build -b"
+  },
+  "author": "Greenlet Team",
+  "license": "GPL-2.0-or-later"
+}
