@@ -29,10 +29,12 @@ define( 'JS_ENGINE_VERSION', '1.0.0' );
 define( 'JS_ENGINE_PLUGIN_FILE', __FILE__ );
 define( 'JS_ENGINE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'JS_ENGINE_LIBRARY_DIR', JS_ENGINE_PLUGIN_DIR . 'library' );
+define( 'JS_ENGINE_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/js-engine' );
 
 define( 'JS_ENGINE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'JS_ENGINE_JS_URL', JS_ENGINE_PLUGIN_URL . 'assets/js' );
 define( 'JS_ENGINE_CSS_URL', JS_ENGINE_PLUGIN_URL . 'assets/css' );
+define( 'JS_ENGINE_API_HOME', 'https://greenletwp.com' );
 
 require_once JS_ENGINE_LIBRARY_DIR . '/helpers.php';
 
@@ -47,6 +49,7 @@ if ( jse_options( 'enabled' ) ) {
  */
 function js_engine_load_importer() {
 	if ( is_admin() ) {
+		require_once JS_ENGINE_LIBRARY_DIR . '/class-actions.php';
 		require_once JS_ENGINE_LIBRARY_DIR . '/class-settings.php';
 	}
 }

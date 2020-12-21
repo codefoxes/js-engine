@@ -24,6 +24,24 @@
 	height: calc(100vh - 162px);
 	display: flex;
 	flex-flow: column;
+
+	.components-notice {
+		margin: 0 0 20px;
+		padding: 2px 10px;
+
+		&.is-info {
+			background: #e8f5f9;
+		}
+	}
+}
+
+.install-notice {
+	display: flex;
+	align-items: center;
+
+	.components-spinner {
+		margin-top: 0;
+	}
 }
 
 .jse-actions {
@@ -37,7 +55,6 @@
 	.components-notice {
 		width: 100%;
 		margin: 0 0 12px;
-		padding: 2px 10px;
 	}
 }
 
@@ -47,5 +64,17 @@
 	.components-spinner {
 		background-color: #23282d;
 		margin: 0 10px 0 0;
+	}
+}
+
+.jse-error {
+	.retry {
+		margin-left: 8px;
+		color: #027cba;
+		cursor: pointer;
+	}
+
+	.manual {
+		margin-top: 5px;
 	}
 }

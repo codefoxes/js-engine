@@ -11,12 +11,11 @@
 function js_engine_activate() {
 	update_option( 'js_engine_activating', true );
 
-	$upload_dir = wp_upload_dir();
-	if ( ! file_exists( $upload_dir['basedir'] . '/js-engine/' ) ) {
-		wp_mkdir_p( $upload_dir['basedir'] . '/js-engine/' );
+	if ( ! file_exists( JS_ENGINE_UPLOADS_DIR ) ) {
+		wp_mkdir_p( JS_ENGINE_UPLOADS_DIR );
 
 		// Add an index file for security.
-		js_engine_get_filesystem()->put_contents( $upload_dir['basedir'] . '/js-engine/index.html', '' );
+		js_engine_get_filesystem()->put_contents( JS_ENGINE_UPLOADS_DIR . '/index.html', '' );
 	}
 }
 
@@ -64,7 +63,6 @@ function jse_options( $name = false ) {
 function jse_ssr( $path = 'server' ) {
 	if (
 		! jse_options( 'enabled' )
-		|| ! current_user_can( 'edit_theme_options' )
 		|| ! function_exists( 'exec' )
 	) {
 		return false;
@@ -73,7 +71,7 @@ function jse_ssr( $path = 'server' ) {
 	$pdir = JS_ENGINE_PLUGIN_DIR;
 	$tdir = get_stylesheet_directory();
 
-	$command = 'cp -u -t ' . $tdir . '/ ' . $pdir . '/assets/engine &&
+	$command = 'cp -u -t ' . $tdir . '/ ' . JS_ENGINE_UPLOADS_DIR . '/engine &&
 	cd ' . $tdir . ' &&
 	./engine ' . $pdir . '/entry ' . $tdir . '/' . $path;
 

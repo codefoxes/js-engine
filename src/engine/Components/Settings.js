@@ -8,6 +8,45 @@ function Settings() {
 	const { engineOptions: options, saving } = useStore( EngineStore );
 	const [ status, setStatus ] = React.useState( false )
 
+	const downloadState = { installed: JSEngine.installed, message: __( 'Downloading JS Engine essentials', 'jsengine' ), status: JSEngine.installed ? false : 'info' }
+	const [ download, setInstall ] = React.useState( downloadState )
+
+	const downloadNow = () => {
+		setInstall( downloadState )
+		const body = { action: 'jse_download', nonce: JSEngine.dnonce }
+		post( { url: JSEngine.ajaxUrl, method: 'POST', body } ).then( res => {
+			if ( res.success === true ) {
+				setInstall( { installed: true, message: res.data, status: 'success' } )
+				JSEngine.installed = '1'
+				setTimeout( () => setInstall( { status: false } ), 3000 )
+			} else {
+				setInstall( { installed: false, message: res.data, status: 'error' } )
+			}
+		} ).catch( err => {
+			setInstall( { installed: false, message: __( 'Download failed', 'jsengine' ) , status: 'error' } )
+		} ).finally( () => localStorage.setItem( 'jseDownload', '1' ) )
+	}
+
+	const ErrorMessage = () => (
+		<div className="jse-error">
+			<span>{ __( 'JS Engine binary file download failed.', 'jsengine' ) }</span>
+			<span className="retry" onClick={ downloadNow }>{ __( 'Retry', 'jsengine' ) }</span>
+			<div className="manual">OR <a href={ `${ JSEngine.apiHome }/docs/js-engine/manual-download/` } target="_blank">{ __( 'Download manually as explained here', 'jsengine' ) }</a></div>
+		</div>
+	)
+
+	React.useEffect( () => {
+		if ( download.installed ) return
+
+		const tried = localStorage.getItem( 'jseDownload' )
+		if ( null !== tried ) {
+			setInstall( { installed: false, message: <ErrorMessage />, status: 'warning' } )
+			return
+		}
+
+		downloadNow()
+	}, [] )
+
 	const getTemplates = () => {
 		const templates = [ { value: 'default', label: 'No change' } ]
 		JSEngine.themes.forEach( ( theme ) => {
@@ -24,12 +63,6 @@ function Settings() {
 	React.useEffect( () => {
 		setTemplates( getTemplates() )
 	}, [ options.theme, options.parent ] )
-
-	React.useEffect( () => {
-		if ( ! JSEngine.installed ) {
-			console.log( 'install engine')
-		}
-	}, [] )
 
 	const setOption = ( k, v ) => {
 		EngineStore.setOption( k, v )
@@ -58,9 +91,24 @@ function Settings() {
 
 	return (
 		<div className="jse-settings">
+			{ !! download.status && (
+				<Notice status={ download.status } onRemove={ () => setInstall( { status: false } ) }>
+					<div className="install-notice">
+						{ download.message }
+						{ ( download.status === 'info' ) && ( <Spinner /> ) }
+					</div>
+				</Notice>
+			) }
+			{ ! JSEngine.canExec && (
+				<Notice status="warning" >
+					<div className="exec-notice">
+						{ __( 'Your server does not allow running of JS engine binary. Functionalities like Server side rendering, build, etc, will not work. Please manually fix the issue.', 'jsengine' ) }
+					</div>
+				</Notice>
+			) }
 			<ToggleControl
 				label={ __( 'Enable JS Engine', 'jsengine' ) }
-				help={ `${ __( 'Currently all the JS Engine functionalities are', 'jsengine' ) } ${ options.enabled ? __( 'enabled', 'jsengine' ) : __( 'disabled', 'jsengine' ) }` }
+				help={ `${ __( 'Currently all the JS Engine functionalities are set to:', 'jsengine' ) } ${ options.enabled ? __( 'enabled', 'jsengine' ) : __( 'disabled', 'jsengine' ) }` }
 				checked={ options.enabled }
 				onChange={ v => setOption( 'enabled', v ) }
 			/>

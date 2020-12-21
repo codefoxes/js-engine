@@ -145,12 +145,15 @@ class Settings {
 
 		$engine_object = array(
 			'title'     => __( 'JS Engine', 'jsengine' ),
+			'apiHome'   => JS_ENGINE_API_HOME,
 			'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
 			'nonce'     => wp_create_nonce( 'js_engine' ),
+			'dnonce'    => wp_create_nonce( 'jse_download' ),
 			'themes'    => $this->get_themes(),
 			'options'   => jse_options(),
 			'templates' => jse_options(),
-			'installed' => file_exists( wp_upload_dir()['basedir'] . '/js-engine/engine' ),
+			'installed' => file_exists( JS_ENGINE_UPLOADS_DIR . '/engine' ),
+			'canExec'   => function_exists( 'exec' ),
 		);
 
 		$min = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
