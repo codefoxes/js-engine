@@ -78,3 +78,15 @@
 		margin-top: 5px;
 	}
 }
+
+.components-flex.components-select-control {
+	flex-direction: row;
+}
+
+.components-select-control .components-input-control__container {
+	max-width: 25rem;
+}
+
+.components-base-control {
+	margin-bottom: 10px;
+}
